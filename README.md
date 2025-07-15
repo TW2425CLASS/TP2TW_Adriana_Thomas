@@ -19,3 +19,4 @@
 git clone <repo>
 cd mashup-app
 npm install
+
