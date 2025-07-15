@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pesquisa de Filme</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <h1>Pesquisar Filme</h1>
+  <form id="searchForm">
+    <input type="text" id="term" placeholder="Ex: Inception" required />
+    <button type="submit">Pesquisar</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const term = document.getElementById('term').value;
+
+      try {
+        const res = await fetch('/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ term })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`;
+          return;
+        }
+
+        document.getElementById('result').innerHTML = `
+          <h2>${data.filme}</h2>
+          ${data.poster ? `<img src="${data.poster}" width="200" alt="Poster do filme" />` : ''}
+          <p><strong>Ator Principal:</strong> ${data.ator_principal}</p>
+          ${data.ator_foto ? `<img src="${data.ator_foto}" width="150" alt="Foto do ator principal" />` : ''}
+          <p>${data.ator_bio}</p>
+        `;
+
+      } catch (error) {
+        document.getElementById('result').innerHTML = `<p style="color:red;">Erro ao fazer a pesquisa.</p>`;
+        console.error('Erro no fetch:', error);
+      }
+    });
+  </script>
+</body>
+</html>
