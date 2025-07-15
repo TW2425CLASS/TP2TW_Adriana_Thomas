@@ -1,36 +1,21 @@
-<!-- public/login.html -->
+<!-- public/register.html -->
 <!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <title>Login</title>
+  <title>Registo</title>
 </head>
 <body>
-  <h1>Iniciar Sessão</h1>
-
-  <div id="erro" style="color: red;"></div>
-
-  <form action="/login" method="POST">
+  <h1>Registar Utilizador</h1>
+  <form action="/register" method="POST">
     <label>Username:</label>
     <input type="text" name="username" required />
     <br />
     <label>Password:</label>
     <input type="password" name="password" required />
     <br />
-    <button type="submit">Entrar</button>
+    <button type="submit">Registar</button>
   </form>
-
-  <p>Não tem conta? <a href="/register.html">Registe-se</a></p>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('erro') === 'credenciais-invalidas') {
-      document.getElementById('erro').textContent = 'Credenciais inválidas. Tente novamente.';
-    }
-    if (params.get('mensagem') === 'registo-sucesso') {
-      document.getElementById('erro').textContent = 'Registo concluído com sucesso. Pode fazer login.';
-      document.getElementById('erro').style.color = 'green';
-    }
-  </script>
+  <p>Já tem conta? <a href="/login.html">Entrar</a></p>
 </body>
 </html>
