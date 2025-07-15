@@ -17,7 +17,6 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Servir arquivos estáticos primeiro!
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
@@ -40,5 +39,10 @@ app.get('/search', isAuth, (req, res) => {
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
+
+app.get("/register", (req, res) => {
+  res.sendFile(__dirname + "/public/register.html");
+});
+
 
 app.listen(3000, () => console.log('Servidor a correr em http://localhost:3000'));
