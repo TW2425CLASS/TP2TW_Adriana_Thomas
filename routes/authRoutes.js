@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const User = require('../models/User'); // Ajuste o caminho se necessário
+const User = require('../models/User'); // Ajuste o caminho conforme necessário
 
 // POST /login
 router.post('/login', (req, res, next) => {
@@ -13,7 +13,7 @@ router.post('/login', (req, res, next) => {
     }
     req.logIn(user, (err) => {
       if (err) return next(err);
-      return res.redirect('/search'); // Corrigido de /Search para /search
+      return res.redirect('/search'); // redireciona para a página protegida
     });
   })(req, res, next);
 });
@@ -40,10 +40,20 @@ router.post('/register', async (req, res) => {
 });
 
 // GET /logout
-router.get('/logout', (req, res) => {
-  req.logout(() => {
+router.get('/logout', (req, res, next) => {
+  req.logout(err => {
+    if (err) return next(err);
     res.redirect('/login.html');
   });
+});
+
+// ✅ GET /check-auth (verifica se o usuário está logado)
+router.get('/check-auth', (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.sendStatus(200); // Está logado
+  } else {
+    return res.sendStatus(401); // Não está logado
+  }
 });
 
 module.exports = router;

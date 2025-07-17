@@ -18,10 +18,12 @@
   <div id="result"></div>
 
   <script>
-    // Verifica se o usuário está logado ao carregar a página
     async function verificarLogin() {
       try {
-        const res = await fetch('/check-auth');
+        const res = await fetch('/check-auth', {
+          credentials: 'include'
+        });
+
         if (res.status === 200) {
           document.getElementById('logoutBtn').style.display = 'inline';
           return true;
@@ -36,19 +38,20 @@
       }
     }
 
-    // Evento de logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
-        await fetch('/logout');
+        await fetch('/logout', {
+          credentials: 'include'
+        });
         window.location.href = '/login.html';
       } catch (err) {
         console.error('Erro ao fazer logout:', err);
       }
     });
 
-    // Evento de submit do formulário
     document.getElementById('searchForm').addEventListener('submit', async e => {
       e.preventDefault();
+
       const logado = await verificarLogin();
       if (!logado) return;
 
@@ -57,11 +60,13 @@
       try {
         const res = await fetch('/search', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ term })
         });
 
         const data = await res.json();
+        console.log('Dados recebidos:', data); // Debug
 
         if (data.error) {
           document.getElementById('result').innerHTML = `<p style="color:red;">${data.error}</p>`;
@@ -74,15 +79,20 @@
           <p><strong>Ator Principal:</strong> ${data.ator_principal}</p>
           ${data.ator_foto ? `<img src="${data.ator_foto}" width="150" alt="Foto do ator principal" />` : ''}
           <p>${data.ator_bio}</p>
+          ${data.trailer ? `
+            <h3>Trailer:</h3>
+            <iframe width="560" height="315"
+              src="${data.trailer}"
+              frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+            </iframe>
+          ` : '<p><em>Trailer não disponível.</em></p>'}
         `;
-
       } catch (error) {
         document.getElementById('result').innerHTML = `<p style="color:red;">Erro ao fazer a pesquisa.</p>`;
         console.error('Erro no fetch:', error);
       }
     });
 
-    // Executar verificação de login ao carregar
     verificarLogin();
   </script>
 </body>
