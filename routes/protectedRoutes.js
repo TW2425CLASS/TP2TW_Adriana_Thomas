@@ -27,6 +27,17 @@ router.post('/search', isAuth, async (req, res) => {
     const creditsData = await creditsRes.json();
     const mainActor = creditsData.cast[0];
 
+    // Buscar vídeos do filme (trailer)
+    const videosRes = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_KEY}`);
+    const videosData = await videosRes.json();
+
+    // Filtrar trailer oficial no YouTube
+    const trailer = videosData.results.find(video => 
+      video.type === 'Trailer' && video.site === 'YouTube'
+    );
+
+    const trailerUrl = trailer ? `https://www.youtube.com/embed/${trailer.key}` : '';
+
     // Buscar resumo da Wikipedia pelo nome do ator principal
     let actorBio = 'Biografia não disponível.';
     let actorImage = '';
@@ -47,13 +58,14 @@ router.post('/search', isAuth, async (req, res) => {
       user: req.user._id
     });
 
-    // Responder com dados
+    // Responder com dados incluindo trailer
     res.json({
       filme: movie.title,
       poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '',
       ator_principal: mainActor ? mainActor.name : 'Desconhecido',
       ator_foto: mainActor && mainActor.profile_path ? `https://image.tmdb.org/t/p/w200${mainActor.profile_path}` : actorImage,
-      ator_bio: actorBio
+      ator_bio: actorBio,
+      trailer: trailerUrl
     });
 
   } catch (err) {

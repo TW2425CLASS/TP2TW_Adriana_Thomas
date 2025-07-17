@@ -8,9 +8,6 @@ const flash = require('connect-flash');
 
 const app = express();
 
-const searchRoutes = require('./routes/search');
-
-
 const isAuth = require('./routes/isAuth');
 require('./auth/auth');
 
@@ -45,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas de autenticação e rotas protegidas
 app.use('/', require('./routes/authRoutes'));
-app.use('/', require('./routes/protectedRoutes'));
+app.use('/', require('./routes/protectedRoutes'));  // Aqui já está tudo que inclui /search
 
 // Rota protegida que carrega a página principal (home.html)
 app.get('/search', isAuth, (req, res) => {
@@ -66,7 +63,7 @@ app.get(['/register', '/register.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
-app.use('/search', searchRoutes);
+// ** Removida a linha app.use('/search', searchRoutes); **
 
 // Inicia o servidor
 const PORT = process.env.PORT || 3000;
