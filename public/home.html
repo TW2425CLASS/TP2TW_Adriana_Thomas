@@ -6,15 +6,52 @@
 </head>
 <body>
   <h1>Pesquisar Filme</h1>
+
+  <!-- Botão de Logout -->
+  <button id="logoutBtn" style="display:none;">Logout</button>
+
   <form id="searchForm">
     <input type="text" id="term" placeholder="Ex: Inception" required />
     <button type="submit">Pesquisar</button>
   </form>
+
   <div id="result"></div>
 
   <script>
+    // Verifica se o usuário está logado ao carregar a página
+    async function verificarLogin() {
+      try {
+        const res = await fetch('/check-auth');
+        if (res.status === 200) {
+          document.getElementById('logoutBtn').style.display = 'inline';
+          return true;
+        } else {
+          document.getElementById('result').innerHTML = '<p style="color:red;">Você precisa estar logado para pesquisar.</p>';
+          document.getElementById('searchForm').style.display = 'none';
+          return false;
+        }
+      } catch (err) {
+        console.error('Erro ao verificar autenticação:', err);
+        return false;
+      }
+    }
+
+    // Evento de logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/logout');
+        window.location.href = '/login.html';
+      } catch (err) {
+        console.error('Erro ao fazer logout:', err);
+      }
+    });
+
+    // Evento de submit do formulário
     document.getElementById('searchForm').addEventListener('submit', async e => {
       e.preventDefault();
+      const logado = await verificarLogin();
+      if (!logado) return;
+
       const term = document.getElementById('term').value;
 
       try {
@@ -44,6 +81,9 @@
         console.error('Erro no fetch:', error);
       }
     });
+
+    // Executar verificação de login ao carregar
+    verificarLogin();
   </script>
 </body>
 </html>

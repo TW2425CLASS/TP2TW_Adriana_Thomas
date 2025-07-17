@@ -60,4 +60,6 @@ app.get('/login.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+
+
 app.listen(3000, () => console.log('Servidor a correr em http://localhost:3000'));

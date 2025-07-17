@@ -14,11 +14,21 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+router.get('/check-auth', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.sendStatus(200); // Está logado
+  } else {
+    res.sendStatus(401); // Não está logado
+  }
+});
+
 router.get('/logout', (req, res) => {
   req.logout(() => {
     res.redirect('/');
   });
 });
+
+
 
 module.exports = router;
     
